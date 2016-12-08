@@ -1,0 +1,6 @@
+name = M2M Article Sample
+description = Sample ingest step for many-to-many articles (currently in book SP)
+package = Islandora Solution Packs
+dependencies[] = islandora_book
+version = 7.x-dev
+core = 7.x

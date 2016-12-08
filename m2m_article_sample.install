@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Install hooks.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function m2m_article_sample_install() {
+  module_load_include('inc', 'islandora', 'includes/solution_packs');
+  islandora_install_solution_pack('m2m_article_sample');
+}
