@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * @file
+ * Most of the stuff.
+ */
+
+function test_autocomplete_menu() {
+  return array(
+    'test_autocomplete' => array(
+      'title' => 'Test autocomplete path',
+      'type' => MENU_CALLBACK,
+      'access callback' => TRUE,
+      'page callback' => 'test_autocomplete_do_autocomplete',
+    ),
+  );
+}
+
+function test_autocomplete_do_autocomplete($term = '*') {
+  drupal_json_output(test_autocomplete_do_search($term));
+}
+
+function test_autocomplete_do_search($term = '*') {
+  $qp = new IslandoraSolrQueryProcessor();
+  $qp->buildQuery(format_string('!field:!term', array(
+    '!field' => 'fgs_label_mt',
+    '!term' => $term,
+  )));
+  $qp->solrParams['fq'] = array(
+    format_string('!field:"!term"', array(
+      '!field' => 'RELS_EXT_hasModel_uri_ms',
+      '!term' => 'info:fedora/islandora:pageCModel',
+    )),
+  );
+  $qp->solrLimit = 200;
+  $qp->executeQuery(FALSE);
+  $results = array();
+  foreach ($qp->islandoraSolrResult['response']['objects'] as $result) {
+    $results[$result['PID']] = $result['solr_doc']['mods_titleInfo_title_s'];
+  }
+  return $results;
+}
