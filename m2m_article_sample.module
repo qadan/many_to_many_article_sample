@@ -75,9 +75,11 @@ function m2m_article_sample_islandora_articleCModel_islandora_ingest_steps(array
 function m2m_article_sample_add_pages_form($form, &$form_state) {
   $form = array(
     'page_pids' => array(
-      '#type' => 'textarea',
+      '#type' => 'select',
+      '#multiple' => TRUE,
+      '#options' => test_autocomplete_do_search(),
       '#title' => t('Page PIDs'),
-      '#description' => t('Comma- or comma-and-space-separated PIDs of pages to add.'),
+      '#description' => t('Select all pages to add.'),
     ),
   );
   return $form;
@@ -87,14 +89,9 @@ function m2m_article_sample_add_pages_form($form, &$form_state) {
  * Submit handler for adding pages.
  */
 function m2m_article_sample_add_pages_form_submit($form, $form_state) {
-  // Get an array of page PIDs.
-  $page_pids = array();
-  if ($form_state['values']['page_pids']) {
-    $page_pids = array_map('trim', explode(',', $form_state['values']['page_pids']));
-  }
   // Start adding these to the book.
   $book = reset($form_state['islandora']['objects']);
-  foreach ($page_pids as $page_pid) {
+  foreach ($form_state['values']['page_pids'] as $page_pid) {
     $page = islandora_object_load($page_pid);
     if ($page) {
       $page->relationships->remove(ISLANDORA_RELS_EXT_URI, 'isPageOf', $book->id);
